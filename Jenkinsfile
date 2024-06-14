@@ -71,13 +71,16 @@ pipeline {
                 }
             }
         }
-
-        stage('Run Ansible Playbook') {
-            steps {
-                dir("${env.ANSIBLE_DIR}") {
-                    sh 'ansible-playbook -i inventory playbook.yml'
-                }
+stage('Run Ansible Playbook') {
+    steps {
+        withCredentials([sshUserPrivateKey(credentialsId: 'ivolve', keyFileVariable: 'SSH_PRIVATE_KEY')]) {
+            dir("${env.ANSIBLE_DIR}") {
+                sh '''
+                ansible-playbook -i inventory playbook.yml
+                '''
             }
         }
     }
+}
+
 }
