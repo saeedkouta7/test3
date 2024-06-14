@@ -8,7 +8,7 @@ pipeline {
         INVENTORY_FILE = 'inventory' // Path to the Ansible inventory file
         AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID') // Jenkins credentials for AWS Access Key
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY') // Jenkins credentials for AWS Secret Key
-        AWS_REGION            = 'us-east-1'
+        AWS_REGION = 'us-east-1'
     }
 
     stages {
@@ -62,26 +62,14 @@ pipeline {
             }
         }
 
-        stage('Delay Before Ansible Playbook') {
+        stage('Run Ansible Playbook') {
             steps {
-                script {
-                    echo "Waiting for 1 minute before proceeding..."
-                    sleep time: 60, unit: 'SECONDS'
-                    echo "Proceeding to run Ansible playbook..."
+                dir("${env.ANSIBLE_DIR}") {
+                    withCredentials([sshUserPrivateKey(credentialsId: 'ivolve', keyFileVariable: 'SSH_PRIVATE_KEY')]) {
+                        sh 'ansible-playbook -i ../${env.INVENTORY_FILE} playbook.yml'
+                    }
                 }
-            }
-        }
-stage('Run Ansible Playbook') {
-    steps {
-        withCredentials([sshUserPrivateKey(credentialsId: 'ivolve', keyFileVariable: 'SSH_PRIVATE_KEY')]) {
-            dir("${env.ANSIBLE_DIR}") {
-                sh '''
-                ansible-playbook -i inventory playbook.yml
-                '''
             }
         }
     }
 }
-
-}
-}    
