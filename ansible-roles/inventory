@@ -1,0 +1,3 @@
+[ec2]
+{{ public_ip }} ansible_user=ubuntu
+

@@ -1,0 +1,7 @@
+- name: Install Git inside Jenkins container
+  command: docker exec -u 0 jenkins apt-get update
+  ignore_errors: yes
+
+- name: Install Git inside Jenkins container
+  command: docker exec -u 0 jenkins apt-get install -y git
+  ignore_errors: yes

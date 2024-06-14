@@ -1,0 +1,21 @@
+
+    - name: Ensure the /tmp directory exists on the target machine
+      file:
+        path: /tmp
+        state: directory
+
+    - name: Download oc CLI tarball to the target machine
+      get_url:
+        url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable/openshift-client-linux.tar.gz
+        dest: /tmp/openshift-client-linux.tar.gz
+        mode: '0644'
+
+    - name: Copy oc CLI tarball to Jenkins container
+      command: docker cp /tmp/openshift-client-linux.tar.gz jenkins:/tmp/openshift-client-linux.tar.gz
+
+    - name: Extract oc CLI inside Jenkins container
+      command: docker exec -u 0 jenkins tar -zxvf /tmp/openshift-client-linux.tar.gz -C /usr/local/bin
+
+    - name: Ensure oc CLI is executable inside Jenkins container
+      command: docker exec -u 0 jenkins chmod +x /usr/local/bin/oc
+

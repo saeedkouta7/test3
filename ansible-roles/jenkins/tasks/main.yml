@@ -1,0 +1,31 @@
+- name: Pull Jenkins image
+  docker_image:
+    name: jenkins/jenkins
+    tag: lts
+    source: pull
+
+- name: Create Jenkins container
+  command: sudo docker run -d --name jenkins -p 8080:8080 -p 50000:50000 -d -v jenkins_home:/var/jenkins_home -v /var/run/docker.sock:/var/run/docker.sock --cpus=2 --memory=2g --memory-swap=2g jenkins/jenkins:lts
+  
+- name: Fetch Jenkins password
+  retries: 5  # Retry up to 5 times
+  delay: 10  # Wait for 10 seconds between retries
+  command: docker exec -u 0 jenkins cat /var/jenkins_home/secrets/initialAdminPassword
+  register: jenkins_initial_password
+  
+- debug:
+    var: jenkins_initial_password.stdout
+    
+- name: Install Java 17 inside Jenkins container
+  retries: 5  
+  delay: 10   
+  command: docker exec -u 0 jenkins bash -c "apt-get update && apt-get install -y wget && wget -O /tmp/openjdk-17_linux-x64_bin.tar.gz https://download.oracle.com/java/17/latest/jdk-17_linux-x64_bin.tar.gz && mkdir -p /opt/java/openjdk && tar -zxvf /tmp/openjdk-17_linux-x64_bin.tar.gz -C /opt/java/openjdk --strip-components=1 && update-alternatives --install /usr/bin/java java /opt/java/openjdk/bin/java 1 && update-alternatives --set java /opt/java/openjdk/bin/java"
+  register: java_install_result
+  until: java_install_result.rc == 0  
+  
+- name: Install Docker CLI inside Jenkins container
+  shell: |
+    docker exec -u 0 jenkins bash -c "         curl -fsSL https://get.docker.com -o get-docker.sh
+        sh get-docker.sh
+    "
+
