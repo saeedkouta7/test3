@@ -1,9 +1,4 @@
 ---
-- name: Check for six module
-  debug:
-    msg: "six module is available: {{ six is available }}"
-  register: six_check
-
 - name: Remove all Docker repository files if they exist
   file:
     path: /etc/apt/sources.list.d/download_docker_com_linux_ubuntu.list
