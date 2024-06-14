@@ -9,7 +9,7 @@ pipeline {
         AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
         AWS_REGION = 'us-east-1'
-        SSH_PRIVATE_KEY_PATH = '/var/lib/jenkins/workspace/testawy/ansible-roles/ivolve1.pem'
+        SSH_PRIVATE_KEY_PATH = '/var/lib/jenkins/workspace/testatot/ansible-roles/ivolve1.pem'
     }
 
     stages {
