@@ -81,7 +81,7 @@ pipeline {
                             sh 'chmod 400 $SSH_PRIVATE_KEY'
                             // Run the Ansible playbook
                             sh '''
-                            ansible-playbook -i ${INVENTORY_FILE} playbook.yml --private-key $SSH_PRIVATE_KEY
+                            ansible-playbook -K -i ${INVENTORY_FILE} playbook.yml --private-key $SSH_PRIVATE_KEY
                             '''
                         }
                     }     
