@@ -62,12 +62,19 @@ pipeline {
             }
         }
 
-        stage('Delay Before Ansible Playbook') {
+        stage('Install Python Packages on Remote Host') {
             steps {
-                script {
-                    echo "Waiting for 1 minute before proceeding..."
-                    sleep time: 60, unit: 'SECONDS'
-                    echo "Proceeding to run Ansible playbook..."
+                withCredentials([sshUserPrivateKey(credentialsId: 'ivolve_private_key', keyFileVariable: 'SSH_PRIVATE_KEY')]) {
+                    script {
+                        // Install required Python packages on the remote host
+                        sh '''
+                        ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no ubuntu@${PUBLIC_IP} << EOF
+                            sudo apt-get update
+                            sudo apt-get install -y python3-pip
+                            pip3 install ansible
+                        EOF
+                        '''
+                    }
                 }
             }
         }
