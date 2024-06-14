@@ -83,9 +83,8 @@ pipeline {
             steps {
                 dir("${env.ANSIBLE_DIR}") {
                     
-                        sh '''
-                        ansible-playbook -i ../${env.INVENTORY_FILE} playbook.yml
-                        '''
+                        sh  'ansible-playbook -i ../${env.INVENTORY_FILE} playbook.yml'
+                        
                     
                 }
             }
