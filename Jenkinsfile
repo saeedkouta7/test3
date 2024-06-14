@@ -66,32 +66,12 @@ pipeline {
             steps {
                 script {
                     echo "Waiting for 1 minute before proceeding..."
-                    sleep time: 60, unit: 'SECONDS'
+                    sleep time: 20, unit: 'SECONDS'
                     echo "Proceeding to run Ansible playbook..."
                 }
             }
         }
-
-        stage('Setup Python Virtual Environment on Remote Host') {
-            steps {
-                withCredentials([sshUserPrivateKey(credentialsId: 'ivolve_private_key', keyFileVariable: 'SSH_PRIVATE_KEY')]) {
-                    script {
-                        // Create a virtual environment and install Ansible on the remote host
-                        sh '''
-                        ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no ubuntu@${PUBLIC_IP} << EOF
-                            sudo apt-get update
-                            sudo apt-get install -y python3-venv
-                            python3 -m venv ansible_venv
-                            source ansible_venv/bin/activate
-                            pip install ansible
-                            deactivate
-EOF
-                        '''
-                    }
-                }
-            }
-        }
-
+        
         stage('Run Ansible Playbook') {
             steps {
                 dir("${ANSIBLE_DIR}") {
@@ -99,16 +79,12 @@ EOF
                         script {
                             // Ensure the key has the correct permissions
                             sh 'chmod 400 $SSH_PRIVATE_KEY'
-                            // Run the Ansible playbook within the virtual environment
+                            // Run the Ansible playbook
                             sh '''
-                            ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no ubuntu@${PUBLIC_IP} << EOF
-                                source ansible_venv/bin/activate
-                                ansible-playbook -i ${ANSIBLE_DIR}/${INVENTORY_FILE} ${ANSIBLE_DIR}/playbook.yml
-                                deactivate
-EOF
+                            ansible-playbook -i ${INVENTORY_FILE} playbook.yml --private-key $SSH_PRIVATE_KEY
                             '''
                         }
-                    }
+                    }     
                 }
             }
         }
