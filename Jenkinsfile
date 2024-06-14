@@ -6,6 +6,9 @@ pipeline {
         BACKEND_DIR = 'terraform/backend' // Path to the backend Terraform directory
         ANSIBLE_DIR = 'ansible-roles' // Path to the Ansible directory
         INVENTORY_FILE = 'inventory' // Path to the Ansible inventory file
+        AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID') // Jenkins credentials for AWS Access Key
+        AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY') // Jenkins credentials for AWS Secret Key
+        AWS_REGION            = 'us-east-1'
     }
 
     stages {
@@ -68,4 +71,3 @@ pipeline {
         }
     }
 }
-
