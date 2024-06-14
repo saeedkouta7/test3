@@ -10,7 +10,7 @@ variable "instance_type" {
 
 variable "key_name" {
   description = "The key pair name"
-  default     = "ivolve"
+  default     = "ivolve1"
 }
 
 variable "subnet_id" {
