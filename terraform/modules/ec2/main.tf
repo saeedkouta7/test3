@@ -15,11 +15,18 @@ resource "aws_instance" "ivolve-ec2" {
     # Update package lists (adjust based on your distro)
     apt-get update
 
-    # Install python3-six library
-    apt-get install -y python3-six
+    # Install Python 3 (adjust based on your distro)
+    apt-get install -y python3
+
+    # Install pip (adjust based on your distro)
+    apt-get install -y python3-pip
+
+    # Install six library using pip
+    pip3 install six
 
     # (Optional) Install Ansible for further configuration
     # apt-get install -y ansible
+
     echo "Python and pip installed successfully"
   EOF
 
