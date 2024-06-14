@@ -9,16 +9,23 @@ pipeline {
         AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
         AWS_REGION = 'us-east-1'
-        SSH_PRIVATE_KEY_PATH = '/var/lib/jenkins/workspace/testatot/ansible-roles/ivolve1.pem'
     }
 
     stages {
         stage('Set Private Key Permissions') {
             steps {
-                sh "chmod 400 ${env.SSH_PRIVATE_KEY_PATH}"
+                script {
+                    // Retrieve the SSH private key credential
+                    def sshPrivateKey = credentials('ivolve_private_key')
+
+                    // Get the path to the SSH private key file
+                    def sshPrivateKeyPath = sshPrivateKey.filePath
+
+                    // Set permissions on the private key
+                    sh "chmod 400 ${sshPrivateKeyPath}"
+                }
             }
         }
-
         stage('Terraform Init') {
             steps {
                 dir("${env.TERRAFORM_DIR}") {
@@ -78,14 +85,19 @@ pipeline {
                 }
             }
         }
-
+        
         stage('Run Ansible Playbook') {
             steps {
-                dir("${env.ANSIBLE_DIR}") {
-                    
-                        sh  'ansible-playbook -i ../${env.INVENTORY_FILE} playbook.yml'
-                        
-                    
+                dir("${ANSIBLE_DIR}") {
+                    // Use 'withCredentials' to inject the SSH private key into the environment
+                    withCredentials([sshUserPrivateKey(credentialsId: 'ivolve_private_key', keyFileVariable: 'SSH_PRIVATE_KEY')]) {
+                        script {
+                            echo "Running Ansible playbook with inventory file: ../${INVENTORY_FILE}"
+                        }
+                        sh '''
+                        ansible-playbook -i ../${INVENTORY_FILE} playbook.yml
+                        '''
+                    }     
                 }
             }
         }
