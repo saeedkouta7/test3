@@ -12,5 +12,17 @@ resource "aws_instance" "ivolve-ec2" {
   tags = {
     Name = "ivolve-ec2"
   }
+
+  user_data = <<-EOF
+    #cloud-config
+    packages:
+      - python3
+      - python3-pip
+
+    # Upgrade pip to latest version
+    runcmd:
+      - pip3 install --upgrade pip
+  EOF
+  }
 }
 
