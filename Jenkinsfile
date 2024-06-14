@@ -72,11 +72,11 @@ pipeline {
         stage('Run Ansible Playbook') {
             steps {
                 dir("${env.ANSIBLE_DIR}") {
-                    withCredentials([sshUserPrivateKey(credentialsId: 'ivolve', keyFileVariable: 'SSH_PRIVATE_KEY')]) {
+                    
                         sh '''
                         ansible-playbook -i ../${env.INVENTORY_FILE} playbook.yml
                         '''
-                    }
+                    
                 }
             }
         }
