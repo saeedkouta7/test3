@@ -11,10 +11,15 @@ resource "aws_instance" "ivolve-ec2" {
 
   user_data = <<-EOF
     #!/bin/bash
+
+    # Update package lists (adjust based on your distro)
     apt-get update
-    apt-get install -y python3 python3-pip
-    python3 -m pip install --upgrade pip
-    pip install --upgrade ansible
+
+    # Install python3-six library
+    apt-get install -y python3-six
+
+    # (Optional) Install Ansible for further configuration
+    # apt-get install -y ansible
     echo "Python and pip installed successfully"
   EOF
 
