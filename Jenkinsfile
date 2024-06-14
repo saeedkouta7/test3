@@ -15,7 +15,7 @@ pipeline {
         stage('Terraform Init') {
             steps {
                 dir("${env.TERRAFORM_DIR}") {
-                    sh 'terraform init'
+                    sh 'terraform init -force-copy'
                 }
             }
         }
