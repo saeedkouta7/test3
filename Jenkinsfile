@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         TERRAFORM_DIR = 'terraform' // Path to the Terraform directory
-        BACKEND_DIR = 'terraform/,odules/backend' // Path to the backend Terraform directory
+        BACKEND_DIR = 'terraform/modules/backend' // Path to the backend Terraform directory
         ANSIBLE_DIR = 'ansible-roles' // Path to the Ansible directory
         INVENTORY_FILE = 'inventory' // Path to the Ansible inventory file
         AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID') // Jenkins credentials for AWS Access Key
