@@ -6,8 +6,8 @@
   become: true
 
   roles:
-     - docker
      - java
+     - docker
      - jenkins
      - git
      - openshift
