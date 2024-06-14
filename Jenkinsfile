@@ -9,9 +9,16 @@ pipeline {
         AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
         AWS_REGION = 'us-east-1'
+        SSH_PRIVATE_KEY_PATH = '/var/lib/jenkins/workspace/testawy/ansible-roles/ivolve1.pem'
     }
 
     stages {
+        stage('Set Private Key Permissions') {
+            steps {
+                sh "chmod 400 ${env.SSH_PRIVATE_KEY_PATH}"
+            }
+        }
+
         stage('Terraform Init') {
             steps {
                 dir("${env.TERRAFORM_DIR}") {
@@ -62,22 +69,12 @@ pipeline {
             }
         }
 
-        stage('Delay Before Ansible Playbook') {
-            steps {
-                script {
-                    echo "Waiting for 1 minute before proceeding..."
-                    sleep time: 60, unit: 'SECONDS'
-                    echo "Proceeding to run Ansible playbook..."
-                }
-            }
-        }
-
         stage('Run Ansible Playbook') {
             steps {
                 dir("${env.ANSIBLE_DIR}") {
                     withCredentials([sshUserPrivateKey(credentialsId: 'ivolve', keyFileVariable: 'SSH_PRIVATE_KEY')]) {
                         sh '''
-                        ansible-playbook -i inventory playbook.yml
+                        ansible-playbook -i ../${env.INVENTORY_FILE} playbook.yml
                         '''
                     }
                 }
