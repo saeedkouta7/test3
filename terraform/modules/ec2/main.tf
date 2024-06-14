@@ -24,5 +24,4 @@ resource "aws_instance" "ivolve-ec2" {
       - pip3 install --upgrade pip
   EOF
   }
-}
 
