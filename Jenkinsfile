@@ -71,18 +71,6 @@ pipeline {
                 }
             }
         }
-
-        stage('Install six library') {
-          steps {
-            script {
-              withCredentials([sshUserPrivateKey(credentialsId: 'ivolve_private_key', keyFileVariable: 'SSH_PRIVATE_KEY')]) {
-                sh '''
-                  ssh -o StrictHostKeyChecking=no ubuntu@${env.PUBLIC_IP} "sudo apt-get update && sudo apt-get install -y python3-six"
-                '''
-              }
-            }
-          }
-        }
         
         stage('Run Ansible Playbook') {
             steps {
