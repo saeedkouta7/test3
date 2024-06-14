@@ -5,6 +5,10 @@ resource "aws_instance" "ivolve-ec2" {
   subnet_id       = var.subnet_id
   security_groups = [var.security_group_id]
 
+  root_block_device {
+    volume_size = 20 
+  }
+
   tags = {
     Name = "ivolve-ec2"
   }
