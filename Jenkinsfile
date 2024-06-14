@@ -12,20 +12,6 @@ pipeline {
     }
 
     stages {
-        stage('Set Private Key Permissions') {
-            steps {
-                script {
-                    // Retrieve the SSH private key credential
-                    def sshPrivateKey = credentials('ivolve_private_key')
-
-                    // Get the path to the SSH private key file
-                    def sshPrivateKeyPath = sshPrivateKey.filePath
-
-                    // Set permissions on the private key
-                    sh "chmod 400 ${sshPrivateKeyPath}"
-                }
-            }
-        }
         stage('Terraform Init') {
             steps {
                 dir("${env.TERRAFORM_DIR}") {
@@ -89,14 +75,15 @@ pipeline {
         stage('Run Ansible Playbook') {
             steps {
                 dir("${ANSIBLE_DIR}") {
-                    // Use 'withCredentials' to inject the SSH private key into the environment
                     withCredentials([sshUserPrivateKey(credentialsId: 'ivolve_private_key', keyFileVariable: 'SSH_PRIVATE_KEY')]) {
                         script {
-                            echo "Running Ansible playbook with inventory file: ../${INVENTORY_FILE}"
+                            // Ensure the key has the correct permissions
+                            sh 'chmod 400 $SSH_PRIVATE_KEY'
+                            // Run the Ansible playbook
+                            sh '''
+                            ansible-playbook -i ${INVENTORY_FILE} playbook.yml --private-key $SSH_PRIVATE_KEY
+                            '''
                         }
-                        sh '''
-                        ansible-playbook -i ../${INVENTORY_FILE} playbook.yml
-                        '''
                     }     
                 }
             }
