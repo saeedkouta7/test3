@@ -69,6 +69,16 @@ pipeline {
             }
         }
 
+        stage('Delay Before Ansible Playbook') {
+            steps {
+                script {
+                    echo "Waiting for 1 minute before proceeding..."
+                    sleep time: 60, unit: 'SECONDS'
+                    echo "Proceeding to run Ansible playbook..."
+                }
+            }
+        }
+
         stage('Run Ansible Playbook') {
             steps {
                 dir("${env.ANSIBLE_DIR}") {
