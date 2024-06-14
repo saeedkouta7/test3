@@ -9,17 +9,16 @@ resource "aws_instance" "ivolve-ec2" {
     volume_size = 20 
   }
 
+  user_data = <<-EOF
+    #!/bin/bash
+    apt-get update
+    apt-get install -y python3 python3-pip
+    python3 -m pip install --upgrade pip
+    echo "Python and pip installed successfully"
+  EOF
+
   tags = {
     Name = "ivolve-ec2"
   }
-
-user_data = <<-EOF
-  #!/bin/bash
-  apt-get update
-  apt-get install -y python3 python3-pip
-  python3 -m pip install --upgrade pip
-  echo "Python and pip installed successfully"
-EOF
-
-  }
+}
 
