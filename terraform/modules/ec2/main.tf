@@ -9,17 +9,23 @@ resource "aws_instance" "ivolve-ec2" {
     volume_size = 20 
   }
 
-  user_data = <<-EOF
+ user_data = <<-EOF
     #!/bin/bash
 
     # Update package lists (adjust based on your distro)
     apt-get update
 
     # Install Python 3 (adjust based on your distro)
-    apt-get install -y python3
+    if ! apt-get install -y python3; then
+      echo "Error installing Python 3!" >&2
+      exit 1
+    fi
 
     # Install pip (adjust based on your distro)
-    apt-get install -y python3-pip
+    if ! apt-get install -y python3-pip; then
+      echo "Error installing pip!" >&2
+      exit 1
+    fi
 
     # Install six library using pip
     pip3 install six
