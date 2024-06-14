@@ -2,12 +2,12 @@ pipeline {
     agent any
 
     environment {
-        TERRAFORM_DIR = 'terraform' // Path to the Terraform directory
-        BACKEND_DIR = 'terraform/modules/backend' // Path to the backend Terraform directory
-        ANSIBLE_DIR = 'ansible-roles' // Path to the Ansible directory
-        INVENTORY_FILE = 'inventory' // Path to the Ansible inventory file
-        AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID') // Jenkins credentials for AWS Access Key
-        AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY') // Jenkins credentials for AWS Secret Key
+        TERRAFORM_DIR = 'terraform'
+        BACKEND_DIR = 'terraform/modules/backend'
+        ANSIBLE_DIR = 'ansible-roles'
+        INVENTORY_FILE = 'inventory'
+        AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
+        AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
         AWS_REGION = 'us-east-1'
     }
 
@@ -66,7 +66,9 @@ pipeline {
             steps {
                 dir("${env.ANSIBLE_DIR}") {
                     withCredentials([sshUserPrivateKey(credentialsId: 'ivolve', keyFileVariable: 'SSH_PRIVATE_KEY')]) {
-                        sh 'ansible-playbook -i ../${env.INVENTORY_FILE} playbook.yml'
+                        sh '''
+                        ansible-playbook -i ../${env.INVENTORY_FILE} playbook.yml
+                        '''
                     }
                 }
             }
